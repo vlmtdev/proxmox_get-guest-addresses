@@ -1,0 +1,26 @@
+- name: returnaddr
+  hosts: all
+
+  tasks:
+    - name: Checking and installing jq
+      apt:
+        name: jq
+        state: present
+
+    - name: Copying script to remote Proxmox host
+      copy:
+        src: ipreport.sh
+        dest: ~/ipreport.sh
+        mode: 0700
+
+    - name: Executing script and return list of addresses
+      shell: ~/ipreport.sh
+      register: ipreport
+
+    - name: Removing script
+      file: 
+        path: ~/ipreport.sh
+        state: absent
+
+    - debug: var=ipreport.stdout_lines
+      
